@@ -7,7 +7,7 @@ def listdir(abspath="/"):
     assert abspath[0] == "/", "Use absolute paths"
 
     if abspath == "/":
-        return [bucket["Name"] for bucket in s3.list_buckets().get('Buckets', [])]
+        return ["/"+bucket["Name"] for bucket in s3.list_buckets().get('Buckets', [])]
 
     split = abspath.split("/")
 
