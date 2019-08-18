@@ -1,4 +1,7 @@
-def inbound_layers(layer):
+from tensorflow.python.keras.engine.base_layer import Layer
+from typing import List
+
+def inbound_layers(layer: Layer) -> List[Layer]:
     """
     Not sure this works.
     """

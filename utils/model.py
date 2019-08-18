@@ -1,8 +1,12 @@
 from utils.layer import inbound_layers
+from tensorflow.python.keras.engine.training import Model as ModelType
+from typing import Tuple, List
 
-def output_shapes(model, test_input=(None, 2056, 2056, 3)):
+def output_shapes(model: ModelType, test_input: Tuple[int]=(None, 2056, 2056, 3)) -> List[Tuple[int]]:
     """
     Will not work with concat and add layers...
+
+    Attempts to compute the output shapes of the layers in model.layers for the test_input.
     """
 
     if model.input_shape == (None, None, None, 3):

@@ -1,26 +1,25 @@
-from tensorflow.python.keras.layers import SeparableConv2D, BatchNormalization, Convolution2D, Input
+from tensorflow.python.keras.layers import SeparableConv2D, BatchNormalization, Input
+from tensorflow.python.keras.engine.training import Model as ModelType
+from tensorflow.python.framework.ops import Tensor as TensorType
 from tensorflow.python.keras import Model
 
-def sep_conv(filter_in: int, filter_out: int, repetition: int = 1, kernel: tuple = (2, 2),
-             depth_multiplier: int = 1, batch_normalization: bool = False):
+from typing import List, Dict, Union, Tuple, Callable
+
+
+def sep_conv_block(arg_list: List[Dict[str, Union[int, float, Tuple[Union[int, None]]]]],
+                   batch_normalization: bool = False) -> Callable[[TensorType], TensorType]:
+
     """
     Simple separable convolutions cascade model.
     """
-
-    input_tensor = Input(shape=(None, None, filter_in))
-
-    # contracting immediately, no depth multiplication here
-    x = SeparableConv2D(filters=filter_out, kernel_size=kernel)(input_tensor)
-
-    if batch_normalization:
-        x = BatchNormalization()(x)
-
-    # rest is repetition
-    for i in range(repetition-1):
-        x = SeparableConv2D(filters=filter_out, kernel_size=kernel, depth_multiplier=depth_multiplier)(x)
+    def f(x):
+        for a in arg_list:
+            x = SeparableConv2D(**a)(x)
 
         if batch_normalization:
             x = BatchNormalization()(x)
 
-    return Model(input_tensor, x)
+        return x
+
+    return f
 

@@ -1,7 +1,11 @@
 import utils
+from tensorflow.python.keras.engine.training import Model as ModelType
+from typing import Dict, Tuple
 
-
-def find_poolpoints(model):
+def find_poolpoints(model: ModelType) -> Dict[Tuple[int], int]:
+    """
+    Last shapes before pooling and the corresponding layer index in model.layers
+    """
     output_dims = utils.output_shapes(model)
     breakpoints = {}
 
