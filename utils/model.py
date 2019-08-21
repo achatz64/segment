@@ -1,4 +1,4 @@
-from utils.layer import inbound_layers
+from .layer import inbound_layers
 from tensorflow.python.keras.engine.training import Model as ModelType
 from typing import Tuple, List
 

@@ -1,6 +1,7 @@
-from data.client import s3, region
+from ..client import s3
+from segment.globals import region
 
-from data.os import path
+from . import path
 
 def listdir(abspath="/"):
 

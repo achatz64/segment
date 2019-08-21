@@ -1,2 +1,3 @@
-from utils.model import output_shapes
+from .model import output_shapes
+from .layer import inbound_layers
 

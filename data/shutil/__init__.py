@@ -1,4 +1,4 @@
-from data.client import s3
+from ..client import s3
 import os as oldos
 
 

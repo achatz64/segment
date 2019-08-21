@@ -1,2 +1,2 @@
-from encoder.utils import find_poolpoints
+from .utils import find_poolpoints
 
