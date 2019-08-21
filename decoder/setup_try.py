@@ -1,7 +1,8 @@
 from tensorflow.python.keras.layers import SeparableConv2D, BatchNormalization, Input, Concatenate, Lambda
 from tensorflow.python.keras.engine.training import Model as ModelType
 from tensorflow.python.framework.ops import Tensor as TensorType
-import tensorflow as tf
+from tensorflow.image import resize
+from tensorflow import shape
 from tensorflow.python.keras import Model
 
 from typing import List, Dict, Union, Tuple, Callable
@@ -52,7 +53,7 @@ def decoder_from_skeleton(skeleton: List[Dict[str, Union[int, Callable[[TensorTy
 
         # resizing for concatenation (unclear why wrapping in Lambda in necessary in 2.0 but not in 1.14)
         # f = Lambda(lambda x: tf.compat.v1.image.resize(f, tf.compat.v1.shape(x)[1:3]))(input_here)
-        f = Lambda(lambda x: tf.image.resize(f, tf.shape(x)[1:3]))(input_here)
+        f = Lambda(lambda x: resize(f, shape(x)[1:3]))(input_here)
 
 
         concat = Concatenate()([f, from_encoder])
@@ -63,7 +64,7 @@ def decoder_from_skeleton(skeleton: List[Dict[str, Union[int, Callable[[TensorTy
 
     # resizing to image dimensions (unclear why wrapping in Lambda in necessary in 2.0 but not in 1.14)
     #output = Lambda(lambda x: tf.compat.v1.image.resize(f, x[0]))(image_shape_layer)
-    output = Lambda(lambda x: tf.image.resize(f, x[0]))(image_shape_layer)
+    output = Lambda(lambda x: resize(f, x[0]))(image_shape_layer)
 
     return Model((inputs, image_shape_layer), output)
 
