@@ -2,7 +2,8 @@ from .layer import inbound_layers
 from tensorflow.python.keras.engine.training import Model as ModelType
 from typing import Tuple, List
 
-def output_shapes(model: ModelType, test_input: Tuple[int]=(None, 2056, 2056, 3)) -> List[Tuple[int]]:
+
+def output_shapes(model: ModelType, test_input: Tuple[int] = (None, 2056, 2056, 3)) -> List[Tuple[int]]:
     """
     Will not work with concat and add layers...
 
@@ -12,15 +13,22 @@ def output_shapes(model: ModelType, test_input: Tuple[int]=(None, 2056, 2056, 3)
     if model.input_shape == (None, None, None, 3):
         input_shape = test_input
     else:
-        return [layer.output_shape for layer in model.layers]
+        shapes_list = []
+        for layer in model.layers:
+            output_shape = layer.output_shape
+
+            if isinstance(output_shape, list):
+                output_shape = output_shape[0]
+
+            shapes_list.append(output_shape)
+
+        return shapes_list
 
     layers = model.layers
     shapes = {}
     shapes_list = []
 
     for layer in layers:
-
-        suggested_output = None
 
         inbound: list = inbound_layers(layer)
 
@@ -35,12 +43,7 @@ def output_shapes(model: ModelType, test_input: Tuple[int]=(None, 2056, 2056, 3)
                 except:
                     suggested = inbound_layer_shape
 
-                if suggested_output is None or suggested == suggested_output:
-                    suggested_output = suggested
-                else:
-                    raise ValueError("Cannot compute shapes")
-
-            shapes[id(layer)] = suggested_output
-            shapes_list.append(suggested_output)
+            shapes[id(layer)] = suggested
+            shapes_list.append(suggested)
 
     return shapes_list

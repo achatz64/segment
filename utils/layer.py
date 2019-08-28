@@ -7,5 +7,9 @@ def inbound_layers(layer: Layer) -> List[Layer]:
     """
     result = []
     for node in layer._inbound_nodes:
-        result += node.inbound_layers
+        inbound = node.inbound_layers
+        if not isinstance(inbound, list):
+            inbound = [inbound]
+
+        result += inbound
     return result

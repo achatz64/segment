@@ -13,14 +13,14 @@ def find_poolpoints(model: ModelType) -> Dict[Tuple[int], int]:
 
     for i, shape in enumerate(output_dims):
         if (input_shape[1] + 1) // 2 >= shape[1]:
-            breakpoints[input_shape[1:3]] = i - 1
+            breakpoints[str(input_shape[1:3])] = i - 1
         input_shape = shape
 
     # last layer
     if len(input_shape) == 4:
-        breakpoints[input_shape[1:3]] = i
+        breakpoints[str(input_shape[1:3])] = i
     else:
-        breakpoints[(1, 1)] = i
+        breakpoints[str((1, 1))] = i
 
     return breakpoints
 
