@@ -1,9 +1,8 @@
-import tensorflow as tf
 from tensorflow.python.keras.layers import SeparableConv2D, BatchNormalization, Input, Concatenate, Lambda, Conv2D
 from tensorflow.python.keras.engine.training import Model as ModelType
 from tensorflow.python.framework.ops import Tensor as TensorType
 from tensorflow.image import resize
-from tensorflow import shape
+from tensorflow import shape, map_fn, int32
 from tensorflow.python.keras import Model
 
 
@@ -136,7 +135,7 @@ def attach(encoder: ModelType,
         print(l.output_shape)
 
     out_decoder = decoder(
-        [l.output for l in layers] + [Lambda(lambda x: tf.map_fn(lambda y: shape(y)[0:2], x, dtype=tf.int32))(inputs)])
+        [l.output for l in layers] + [Lambda(lambda x: map_fn(lambda y: shape(y)[0:2], x, dtype=int32))(inputs)])
 
     return Model(inputs, out_decoder)
 
