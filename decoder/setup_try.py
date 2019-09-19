@@ -54,7 +54,7 @@ def decoder_from_skeleton(skeleton: List[Dict[str, Union[int, Callable[[TensorTy
 
         # resizing for concatenation (unclear why wrapping in Lambda in necessary in 2.0 but not in 1.14)
         # f = Lambda(lambda x: tf.compat.v1.image.resize(f, tf.compat.v1.shape(x)[1:3]))(input_here)
-        f = Lambda(lambda x: resize(x[1], shape(x[0])[1:3]))([input_here, f])
+        f = Lambda(lambda x: resize(x[1], shape(x[0])[1:3], method="nearest"))([input_here, f])
 
         concat = Concatenate()([f, from_encoder])
 
@@ -64,7 +64,7 @@ def decoder_from_skeleton(skeleton: List[Dict[str, Union[int, Callable[[TensorTy
 
     # resizing to image dimensions (unclear why wrapping in Lambda in necessary in 2.0 but not in 1.14)
     #output = Lambda(lambda x: tf.compat.v1.image.resize(f, x[0]))(image_shape_layer)
-    output = Lambda(lambda x: resize(x[1], x[0][0]))([image_shape_layer, f])
+    output = Lambda(lambda x: resize(x[1], x[0][0], method="nearest"))([image_shape_layer, f])
 
     return Model((inputs, image_shape_layer), output)
 
@@ -110,11 +110,13 @@ def baseline_skeleton(channels: List[Dict[str, int]],
 
     return skeleton
 
-def zero_skeleton(channels : List[int]):
 
-    def edconn(f: TensorType):
-        for c in channels[1:]:
+def zero_skeleton(channels : List[int]):
+    def edconn(f):
+        for c in channels[1:-1]:
             f = Conv2D(c, (1, 1), activation='relu')(f)
+
+        f = Conv2D(channels[-1], (1, 1), activation='softmax')(f)
         return f
 
     return [{"channels": channels[0],
